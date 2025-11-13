@@ -18,7 +18,7 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 -- Tạo cửa sổ Fluent chính
 local Window = Fluent:CreateWindow({
     Title = "Hutao Hub (V3) [Premium] | Forsaken |",
-    SubTitle = "Version 5.3.5",
+    SubTitle = "Version 5.3.7",
     Search = true,
     Icon = "rbxassetid://111221806665390",
     TabWidth = 160,
@@ -4898,6 +4898,13 @@ do
     -- 🟢 DỮ LIỆU KILLERS + SKINS (chỉ sửa ở đây)
     -- ==============================
     local KillersData = {
+        ["Survivors"] = {
+            ["Default"] = {
+                Idle = "rbxassetid://134624270247120",
+                Walk = "rbxassetid://132377038617766",
+                Run  = "rbxassetid://115946474977409",
+            }
+        },
         ["Shasher"] = {
             ["Default"] = {
                 Idle = "rbxassetid://116050994905421",
@@ -5384,14 +5391,14 @@ for i, d in ipairs(buttonsData) do
 end
 
 -- 🌟 Tích hợp Toggle + Input
-Tabs.Custom:AddToggle("UnlockSukunaSkill", {
-    Title = "Unlock Sukuna Skill",
+Tabs.Custom:AddToggle("SukunaSkill", {
+    Title = "Sukuna Skill",
     Default = false
 }):OnChanged(function(state)
     screenGui.Enabled = state
 end)
 
-Tabs.Custom:AddToggle("LockFrames", {
+Tabs.Custom:AddToggle("SukunaLockButton", {
     Title = "Lock Buttons",
     Default = true
 }):OnChanged(function(state)
@@ -5405,7 +5412,7 @@ Tabs.Custom:AddToggle("LockFrames", {
     end
 end)
 
-Tabs.Custom:AddInput("ButtonSizeInput", {
+Tabs.Custom:AddInput("SkunaButtonSkill", {
     Title = "Button Size",
     Default = tostring(BUTTON_SIZE),
     Placeholder = "Nhập số px",
@@ -5428,7 +5435,183 @@ end
 
 
 
+do
+-- LocalScript (StarterPlayerScripts)
 
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- ⚡ Config
+local BUTTON_SIZE = 48
+local FramesLocked = true
+local screenGui
+local createdFrames = {}
+
+-- dữ liệu các nút
+local buttonsData = {
+    {Name = "Btn1", AnimationId = "72722244508749", PlayMusic = false, ImageId = "87293861183080"},
+    {Name = "Btn2", AnimationId = "96959123077498", PlayMusic = false, ImageId = "87293861183080"},
+}
+
+-- vị trí ban đầu
+local startPositions = {
+    UDim2.new(0, 80, 0, 200),
+    UDim2.new(0, 140, 0, 200),
+}
+
+-- 🌟 Drag Module
+local function makeDraggable(frame)
+    local dragging, dragStart, startPos
+
+    frame.InputBegan:Connect(function(input)
+        if not FramesLocked and (input.UserInputType == Enum.UserInputType.MouseButton1 
+            or input.UserInputType == Enum.UserInputType.Touch) then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if not FramesLocked and dragging and 
+            (input.UserInputType == Enum.UserInputType.MouseMovement 
+            or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+end
+
+-- 🔹 GUI container
+screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CircleButtonsGUI"
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+screenGui.Enabled = false
+screenGui.Parent = playerGui
+
+-- 🔹 Hàm tạo frame + button
+local function createFrameWithButton(data, pos)
+    local frame = Instance.new("Frame")
+    frame.Name = data.Name .. "_Frame"
+    frame.Size = UDim2.new(0, BUTTON_SIZE, 0, BUTTON_SIZE)
+    frame.Position = pos
+    frame.BackgroundTransparency = 1
+    frame.ZIndex = 1
+    frame.Parent = screenGui
+    frame.Active = true
+
+    -- bo tròn frame
+    local frameCorner = Instance.new("UICorner")
+    frameCorner.CornerRadius = UDim.new(1, 0)
+    frameCorner.Parent = frame
+
+    local btn = Instance.new("ImageButton")
+    btn.Name = data.Name
+    btn.Size = UDim2.new(1, 0, 1, 0)
+    btn.BackgroundTransparency = 1
+    btn.Image = "rbxassetid://" .. data.ImageId
+    btn.ZIndex = 2
+    btn.Parent = frame
+    btn.ScaleType = Enum.ScaleType.Fit -- giữ tỉ lệ ảnh
+
+    -- bo tròn nút
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1, 0)
+    corner.Parent = btn
+
+    -- click chạy animation/nhạc
+    btn.MouseButton1Click:Connect(function()
+        if FramesLocked then
+            local char = player.Character or player.CharacterAdded:Wait()
+            local humanoid = char:FindFirstChildOfClass("Humanoid")
+            if not humanoid then return end
+
+            local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
+            local anim = Instance.new("Animation")
+            anim.AnimationId = "rbxassetid://" .. data.AnimationId
+            local track = animator:LoadAnimation(anim)
+            track:Play()
+
+            if data.PlayMusic and data.MusicId then
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://" .. data.MusicId
+                sound.Volume = 1
+                sound.Parent = char:FindFirstChild("Head") or playerGui
+                sound:Play()
+                sound.Ended:Connect(function() sound:Destroy() end)
+            end
+        end
+    end)
+
+    makeDraggable(frame)
+
+    btn.Visible = FramesLocked
+    frame.BackgroundTransparency = FramesLocked and 1 or 0.3
+
+    table.insert(createdFrames, frame)
+end
+
+-- tạo nút
+for i, d in ipairs(buttonsData) do
+    createFrameWithButton(d, startPositions[i])
+end
+
+-- 🌟 Tích hợp Toggle + Input
+Tabs.Custom:AddToggle("Guest1337Skill", {
+    Title = "Guest1337 Skill",
+    Default = false
+}):OnChanged(function(state)
+    screenGui.Enabled = state
+end)
+
+Tabs.Custom:AddToggle("Guest1337LockButton", {
+    Title = "Lock Buttons",
+    Default = true
+}):OnChanged(function(state)
+    FramesLocked = state
+    for _, frame in ipairs(createdFrames) do
+        local btn = frame:FindFirstChildOfClass("ImageButton")
+        if btn then
+            btn.Visible = FramesLocked
+        end
+        frame.BackgroundTransparency = FramesLocked and 1 or 0.3
+    end
+end)
+
+Tabs.Custom:AddInput("Quest1337SkillSize", {
+    Title = "Button Size",
+    Default = tostring(BUTTON_SIZE),
+    Placeholder = "Nhập số px",
+    Numeric = true,
+    Finished = true
+}):OnChanged(function(value)
+    local num = tonumber(value)
+    if num and num > 0 then
+        BUTTON_SIZE = num
+        for _, frame in ipairs(createdFrames) do
+            frame.Size = UDim2.new(0, BUTTON_SIZE, 0, BUTTON_SIZE)
+            local btn = frame:FindFirstChildOfClass("ImageButton")
+            if btn then
+                btn.Size = UDim2.new(1, 0, 1, 0)
+            end
+        end
+    end
+end)
+end
 
 
 
