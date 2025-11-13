@@ -18,7 +18,7 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 -- Tạo cửa sổ Fluent chính
 local Window = Fluent:CreateWindow({
     Title = "Hutao Hub (V3) [Premium] | Forsaken |",
-    SubTitle = "Version 5.3.7",
+    SubTitle = "Version 5.3.9",
     Search = true,
     Icon = "rbxassetid://111221806665390",
     TabWidth = 160,
@@ -3280,7 +3280,12 @@ do
         ["139309647473555"] = true, -- Bay Đến Mục Tiêu
         ["133363345661032"] = true, -- Chuẩn Bị Bay Đến Mục tiêu
         ["128414736976503"] = true, -- Sẵn Sàng Bay Đến
---        ["121808371053483"] = true, -- La Hét Và Mặt :))
+--        ["121808371053483"] = true, -- La Hét Vào Mặt :))
+        ["77375846492436"] = true, -- Noli Aful Rework
+        ["92445608014276"] = true, -- NAR
+        ["100358581940485"] = true, -- NAR
+        ["91758760621955"] = true, -- NAR
+        ["94634594529334"] = true, -- NAR
     }
 
     local delayedAnimations = {}
@@ -6868,7 +6873,12 @@ local AttackAnimations = {
     'rbxassetid://139309647473555',
     'rbxassetid://133363345661032',
     'rbxassetid://128414736976503',
-    'rbxassetid://121808371053483'
+    'rbxassetid://121808371053483',
+    'rbxassetid://77375846492436',
+    'rbxassetid://92445608014276',
+    'rbxassetid://100358581940485',
+    'rbxassetid://91758760621955',
+    'rbxassetid://94634594529334'
 }
 
 -- danh sách model killers và survivors (theo yêu cầu của bạn)
