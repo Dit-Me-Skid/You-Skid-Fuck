@@ -18,7 +18,7 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 -- Tạo cửa sổ Fluent chính
 local Window = Fluent:CreateWindow({
     Title = "Hutao Hub (V3) [Premium] | Forsaken |",
-    SubTitle = "Version 5.3.9",
+    SubTitle = "Version 5.4.2",
     Search = true,
     Icon = "rbxassetid://111221806665390",
     TabWidth = 160,
@@ -3286,6 +3286,15 @@ do
         ["100358581940485"] = true, -- NAR
         ["91758760621955"] = true, -- NAR
         ["94634594529334"] = true, -- NAR
+        ["90620531468240"] = true, -- 1x slash m2-3 rework
+        ["94958041603347"] = true, -- Slasher Bí ngô trắng / chém
+        ["131642454238375"] = true, -- Slasher Bí Ngô trắng / Khóa skill
+        ["110702884830060"] = true, -- Slasher Bí Ngô Trắng / Liên Hoàn Chém
+        ["76312020299624"] = true, -- Noli Admin Void rush
+        ["126654961540956"] = true, -- NAVR
+        ["139613699193400"] = true, -- NAVR
+        ["91509234639766"] = true, -- NA Đánh Thường
+        ["105458270463374"] = true, -- John Doe M3 và M4 Đánh Thường
     }
 
     local delayedAnimations = {}
@@ -3467,6 +3476,7 @@ do
         ["100592913030351"] = true,
         ["70447634862911"]  = true,
         ["83685305553364"]  = true,
+        ["101101433684051"] = true,
     }
 
     local function onAnimationPlayed(player, char, track)
@@ -6878,7 +6888,17 @@ local AttackAnimations = {
     'rbxassetid://92445608014276',
     'rbxassetid://100358581940485',
     'rbxassetid://91758760621955',
-    'rbxassetid://94634594529334'
+    'rbxassetid://94634594529334',
+    'rbxassetid://101101433684051',
+    'rbxassetid://90620531468240',
+    'rbxassetid://94958041603347',
+    'rbxassetid://131642454238375',
+    'rbxassetid://110702884830060',
+    'rbxassetid://76312020299624',
+    'rbxassetid://126654961540956',
+    'rbxassetid://139613699193400',
+    'rbxassetid://91509234639766',
+    'rbxassetid://105458270463374'
 }
 
 -- danh sách model killers và survivors (theo yêu cầu của bạn)
